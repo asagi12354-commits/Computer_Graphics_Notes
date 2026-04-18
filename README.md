@@ -1,0 +1,2 @@
+# Learning_For_Ray_trancing
+个人学习光线追踪的非常草台的笔记整理
