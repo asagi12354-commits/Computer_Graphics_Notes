@@ -130,30 +130,30 @@ flowchart LR
     *   **透视投影：** 齐次坐标的 $w$ 分量在透视投影中扮演了至关重要的角色，它用于实现“近大远小”的效果，我们会在投影变换中详细讨论。
 
 2.  **缩放矩阵 $S$：**
-    $$S = \begin{pmatrix} s_x & 0 & 0 & 0 \\ 0 & s_y & 0 & 0 \\ 0 & 0 & s_z & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+    $S = \begin{pmatrix} s_x & 0 & 0 & 0 \\ 0 & s_y & 0 & 0 \\ 0 & 0 & s_z & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$
     *   **几何意义：** 这个矩阵很简单直观，它将顶点的 $x, y, z$ 坐标分别乘以对应的缩放因子 $s_x, s_y, s_z$。
     *   就像你用图片编辑软件调整图片大小一样，你可以单独拉伸宽度、高度或深度。如果 $s_x = s_y = s_z$，那就是等比例缩放。
 
 3.  **旋转矩阵 $R_x, R_y, R_z$：**
     文档中给出了围绕X、Y、Z轴旋转的矩阵。这些矩阵的推导基于**二维旋转公式**的扩展。
     *   **二维旋转回顾：** 在二维平面上，一个点 $(x, y)$ 绕原点逆时针旋转 $\theta$ 角后的新坐标 $(x', y')$ 可以表示为：
-        $$x' = x \cos\theta - y \sin\theta$$
-        $$y' = x \sin\theta + y \cos\theta$$
+        $x' = x \cos\theta - y \sin\theta$
+        $y' = x \sin\theta + y \cos\theta$
         对应的矩阵形式是：
-        $$\begin{pmatrix} x' \\ y' \end{pmatrix} = \begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{pmatrix} \begin{pmatrix} x \\ y \end{pmatrix}$$
+        $\begin{pmatrix} x' \\ y' \end{pmatrix} = \begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{pmatrix} \begin{pmatrix} x \\ y \end{pmatrix}$
     *   **扩展到三维：**
         *   **绕X轴旋转 $R_x$：** 当绕X轴旋转时，X坐标保持不变，Y和Z坐标在YZ平面上进行二维旋转。所以，X轴对应的行和列保持不变，YZ分量应用二维旋转矩阵。
-            $$R_x = \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & \cos\theta & -\sin\theta & 0 \\ 0 & \sin\theta & \cos\theta & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+            $R_x = \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & \cos\theta & -\sin\theta & 0 \\ 0 & \sin\theta & \cos\theta & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$
         *   **绕Y轴旋转 $R_y$：** 类似地，绕Y轴旋转时，Y坐标不变，X和Z坐标在XZ平面上旋转。需要注意的是，为了保持右手坐标系，通常将Z轴视为“向上”，X轴视为“向右”，所以旋转方向会有所调整，导致 $\sin\theta$ 的符号变化。
-            $$R_y = \begin{pmatrix} \cos\theta & 0 & \sin\theta & 0 \\ 0 & 1 & 0 & 0 \\ -\sin\theta & 0 & \cos\theta & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+            $R_y = \begin{pmatrix} \cos\theta & 0 & \sin\theta & 0 \\ 0 & 1 & 0 & 0 \\ -\sin\theta & 0 & \cos\theta & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$
         *   **绕Z轴旋转 $R_z$：** Z坐标不变，X和Y坐标在XY平面上旋转。
-            $$R_z = \begin{pmatrix} \cos\theta & -\sin\theta & 0 & 0 \\ \sin\theta & \cos\theta & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+            $$R_z = \begin{pmatrix} \cos\theta & -\sin\theta & 0 & 0 \\ \sin\theta & \cos\theta & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$
     *   **几何意义：** 想象你拿着一个地球仪，绕着它的轴心转动。绕X轴转就是让它“点头”或“仰头”，绕Y轴转就是让它“摇头”，绕Z轴转就是让它“自转”。
 
 4.  **平移矩阵 $T$：**
-    $$T = \begin{pmatrix} 1 & 0 & 0 & t_x \\ 0 & 1 & 0 & t_y \\ 0 & 0 & 1 & t_z \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+    $T = \begin{pmatrix} 1 & 0 & 0 & t_x \\ 0 & 1 & 0 & t_y \\ 0 & 0 & 1 & t_z \\ 0 & 0 & 0 & 1 \end{pmatrix}$
     *   **几何意义：** 这个矩阵利用齐次坐标的 $w=1$ 特性，将平移量 $t_x, t_y, t_z$ 加到顶点的 $x, y, z$ 分量上。
-        $$\begin{pmatrix} x' \\ y' \\ z' \\ 1 \end{pmatrix} = \begin{pmatrix} 1 & 0 & 0 & t_x \\ 0 & 1 & 0 & t_y \\ 0 & 0 & 1 & t_z \\ 0 & 0 & 0 & 1 \end{pmatrix} \begin{pmatrix} x \\ y \\ z \\ 1 \end{pmatrix} = \begin{pmatrix} x + t_x \\ y + t_y \\ z + t_z \\ 1 \end{pmatrix}$$
+        $\begin{pmatrix} x' \\ y' \\ z' \\ 1 \end{pmatrix} = \begin{pmatrix} 1 & 0 & 0 & t_x \\ 0 & 1 & 0 & t_y \\ 0 & 0 & 1 & t_z \\ 0 & 0 & 0 & 1 \end{pmatrix} \begin{pmatrix} x \\ y \\ z \\ 1 \end{pmatrix} = \begin{pmatrix} x + t_x \\ y + t_y \\ z + t_z \\ 1 \end{pmatrix}$
     *   **几何意义：** 就像你在地图上移动一个标记点，只是简单地把它从一个位置搬到另一个位置，不改变它的方向和大小。
 
 5.  **组合模型变换矩阵 $M = T \cdot R \cdot S$：**
@@ -207,7 +207,7 @@ $\mathbf{v}_{view} = V \cdot \mathbf{v}_{world}$
         （注意这里是 $\mathbf{z} \times \mathbf{x}$ 而不是 $\mathbf{x} \times \mathbf{z}$，以确保右手坐标系。）
 
     有了这三个相互垂直的单位向量 $\mathbf{x}, \mathbf{y}, \mathbf{z}$，它们就构成了相机坐标系的基。将世界空间中的点转换到相机空间，实际上就是将世界空间中的点投影到这三个基向量上。这个旋转矩阵 $R_{view}$ 的每一行就是这些基向量的转置：
-    $$R_{view} = \begin{pmatrix} x_x & x_y & x_z & 0 \\ y_x & y_y & y_z & 0 \\ z_x & z_y & z_z & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+    $R_{view} = \begin{pmatrix} x_x & x_y & x_z & 0 \\ y_x & y_y & y_z & 0 \\ z_x & z_y & z_z & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$
     其中 $(x_x, x_y, x_z)$ 是 $\mathbf{x}$ 的分量，以此类推。
 
 
@@ -253,7 +253,7 @@ $\mathbf{v}_{view} = V \cdot \mathbf{v}_{world}$
 **推导步骤：**
 
 1.  **平移到中心：** 首先，我们需要将这个长方体的中心平移到原点。长方体的中心坐标是 $(\frac{l+r}{2}, \frac{b+t}{2}, \frac{n+f}{2})$。所以，我们需要向负方向平移这些距离。
-    $$T_{ortho} = \begin{pmatrix} 1 & 0 & 0 & -\frac{l+r}{2} \\ 0 & 1 & 0 & -\frac{b+t}{2} \\ 0 & 0 & 1 & -\frac{n+f}{2} \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+    $T_{ortho} = \begin{pmatrix} 1 & 0 & 0 & -\frac{l+r}{2} \\ 0 & 1 & 0 & -\frac{b+t}{2} \\ 0 & 0 & 1 & -\frac{n+f}{2} \\ 0 & 0 & 0 & 1 \end{pmatrix}$
     *   **几何意义：** 就像你有一个盒子，你把它搬到房间的正中央。
 
 2.  **缩放到标准尺寸：** 接着，我们需要将这个长方体缩放到边长为2的标准立方体（NDC空间范围是 $[-1, 1]$）。长方体的宽度是 $(r-l)$，高度是 $(t-b)$，深度是 $(n-f)$。为了映射到 $[-1, 1]$，我们需要将宽度缩放 $2/(r-l)$，高度缩放 $2/(t-b)$，深度缩放 $2/(n-f)$。
@@ -262,7 +262,7 @@ $\mathbf{v}_{view} = V \cdot \mathbf{v}_{world}$
 
 3.  **组合正交投影矩阵 $P_{ortho} = S_{ortho} \cdot T_{ortho}$：**
     将这两个矩阵相乘，就得到了最终的正交投影矩阵。
-    $$\begin{pmatrix} x_{clip} \\ y_{clip} \\ z_{clip} \\ w_{clip} \end{pmatrix} = \begin{pmatrix} \frac{2}{r-l} & 0 & 0 & -\frac{l+r}{r-l} \\ 0 & \frac{2}{t-b} & 0 & -\frac{b+t}{t-b} \\ 0 & 0 & \frac{2}{n-f} & -\frac{n+f}{n-f} \\ 0 & 0 & 0 & 1 \end{pmatrix} \cdot \begin{pmatrix} x_v \\ y_v \\ z_v \\ 1 \end{pmatrix}$$
+    $\begin{pmatrix} x_{clip} \\ y_{clip} \\ z_{clip} \\ w_{clip} \end{pmatrix} = \begin{pmatrix} \frac{2}{r-l} & 0 & 0 & -\frac{l+r}{r-l} \\ 0 & \frac{2}{t-b} & 0 & -\frac{b+t}{t-b} \\ 0 & 0 & \frac{2}{n-f} & -\frac{n+f}{n-f} \\ 0 & 0 & 0 & 1 \end{pmatrix} \cdot \begin{pmatrix} x_v \\ y_v \\ z_v \\ 1 \end{pmatrix}$
     这里 $w_{clip}$ 始终为1，因为正交投影没有透视效果，不需要 $w$ 分量来做透视除法。
 
 #### 2. 透视投影（Perspective Projection）
@@ -289,8 +289,8 @@ $\mathbf{v}_{view} = V \cdot \mathbf{v}_{world}$
 
 关键的几何观察是：在透视投影中，一个点 $(x_v, y_v, z_v)$ 在近裁剪面上的投影点 $(x_p, y_p)$ 满足相似三角形原理。
 如果近裁剪面在 $z=n$ 处，那么：
-$$x_p = x_v \cdot \frac{n}{z_v}$$
-$$y_p = y_v \cdot \frac{n}{z_v}$$
+$x_p = x_v \cdot \frac{n}{z_v}$
+$y_p = y_v \cdot \frac{n}{z_v}$
 注意，相机空间中 $z_v$ 是负值，$n$ 也是负值，所以 $n/z_v$ 是一个正数，且当 $|z_v|$ 越大（越远），$n/z_v$ 越小，投影点越靠近中心，体现了“近大远小”。
 
 为了用矩阵乘法实现这种除法，我们需要利用齐次坐标的 $w$ 分量。我们希望最终的 $w_{clip}$ 等于 $-z_v$（或者 $z_v$，取决于坐标系定义）。
